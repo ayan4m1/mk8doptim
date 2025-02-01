@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 export default function Layout({ children = [] }) {
   return (
     <Fragment>
-      <Helmet titleTemplate="Tonality - %s" />
+      <Helmet titleTemplate="mk8doptim - %s" />
       <Navbar expand="lg" variant="dark">
         <Container>
           <Navbar.Brand>

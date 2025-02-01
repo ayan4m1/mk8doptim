@@ -22,7 +22,7 @@ const plugins = [
   }),
   new MiniCssExtractPlugin(),
   new CnameWebpackPlugin({
-    domain: 'tonality.andrewdelisa.com'
+    domain: 'mk8doptim.andrewdelisa.com'
   })
 ];
 

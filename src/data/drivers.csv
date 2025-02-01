@@ -1,4 +1,4 @@
-﻿Driver;Weight;Acceleration;On-Road traction;Off-Road Traction;Mini-Turbo;Ground Speed;Water Speed;Anti-Gravity Speed;Air Speed;Ground Handling;Water Handling;Anti-Gravity Handling;Air Handling
+﻿name;weight;acceleration;unused;traction;miniTurbo;groundSpeed;waterSpeed;antiGravitySpeed;airSpeed;groundHandling;waterHandling;antiGravityHandling;airHandling
 Mario;6;2;4;2;2;6;6;6;6;4;4;4;4
 Luigi;6;2;5;1;2;6;6;6;6;5;5;5;5
 Peach;4;3;3;3;3;5;5;5;5;5;5;5;5

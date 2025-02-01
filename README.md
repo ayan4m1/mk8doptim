@@ -1,3 +1,3 @@
-# tonality
+# mk8doptim
 
-This site is MIDI synthesizer experiment.
+This site is a Mario Kart 8 Deluxe build optimizer.

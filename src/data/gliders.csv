@@ -1,4 +1,4 @@
-﻿Glider;Weight;Acceleration;On-Road traction;Off-Road Traction;Mini-Turbo;Ground Speed;Water Speed;Anti-Gravity Speed;Air Speed;Ground Handling;Water Handling;Anti-Gravity Handling;Air Handling
+﻿name;weight;acceleration;unused;traction;miniTurbo;groundSpeed;waterSpeed;antiGravitySpeed;airSpeed;groundHandling;waterHandling;antiGravityHandling;airHandling
 Super Glider;1;1;1;1;1;1;1;0;2;1;0;1;1
 Cloud Glider;0;2;1;1;2;0;1;1;1;1;0;1;2
 Wario Wing ;2;1;2;0;1;1;0;1;2;1;1;0;1
