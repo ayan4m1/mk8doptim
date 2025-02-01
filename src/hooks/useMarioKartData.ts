@@ -16,6 +16,13 @@ export enum StatType {
   Invincibility = 'invincibility'
 }
 
+export type Build = {
+  body: string;
+  driver: string;
+  glider: string;
+  tire: string;
+};
+
 export type Part = {
   name: string;
   stats: Map<StatType, number>;

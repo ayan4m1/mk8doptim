@@ -1,50 +1,49 @@
 import { useMemo } from 'react';
-import { Part, StatType } from '../hooks/useMarioKartData';
+import { Build, Part, StatType } from '../hooks/useMarioKartData';
 import { Col, Container, ProgressBar, Row } from 'react-bootstrap';
 import TrackTypeBar from './TrackTypeBar';
 
 interface IProps {
   gliders: Part[];
-  glider: string;
   drivers: Part[];
-  driver: string;
   bodies: Part[];
-  body: string;
   tires: Part[];
-  tire: string;
+  build: Build;
 }
 
 export default function BuildResult({
   gliders,
-  glider,
   drivers,
-  driver,
   bodies,
-  body,
   tires,
-  tire
+  build
 }: IProps) {
-  if (!glider || !driver || !body || !tire) {
+  if (!build) {
     return null;
   }
 
-  const gliderStats = gliders.find((part) => part.name === glider);
-  const driverStats = drivers.find((part) => part.name === driver);
-  const bodyStats = bodies.find((part) => part.name === body);
-  const tireStats = tires.find((part) => part.name === tire);
+  const parts = useMemo(
+    () => ({
+      glider: gliders.find((part) => part.name === build.glider),
+      driver: drivers.find((part) => part.name === build.driver),
+      body: bodies.find((part) => part.name === build.body),
+      tire: tires.find((part) => part.name === build.tire)
+    }),
+    [gliders, drivers, bodies, tires, build]
+  );
 
   const effectiveStats = useMemo(
     () =>
       new Map<StatType, number>(
         Object.values(StatType).map((type) => [
           type,
-          gliderStats.stats.get(type) +
-            driverStats.stats.get(type) +
-            bodyStats.stats.get(type) +
-            tireStats.stats.get(type)
+          parts.glider.stats.get(type) +
+            parts.driver.stats.get(type) +
+            parts.body.stats.get(type) +
+            parts.tire.stats.get(type)
         ])
       ),
-    [gliders, glider, drivers, driver, bodies, body, tires, tire]
+    [parts]
   );
   const totalStats = useMemo(
     () =>
@@ -92,9 +91,8 @@ export default function BuildResult({
       ]
     ];
 
-    const [, name] = stats.find(
-      ([val]) => val === Math.max(...stats.map(([val]) => val))
-    );
+    const statValues = [...stats.map(([val]) => val)];
+    const [, name] = stats.find(([val]) => val === Math.max(...statValues));
 
     return name;
   }, [effectiveStats]);

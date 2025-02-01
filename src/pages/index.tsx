@@ -1,23 +1,23 @@
 import { Helmet } from 'react-helmet';
-import { Fragment, useState } from 'react';
+import { Fragment, useCallback, useState } from 'react';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Col, Container, Row } from 'react-bootstrap';
 
-import CustomErrorBoundary from '../components/ErrorBoundary';
-import useMarioKartData, { StatType } from '../hooks/useMarioKartData';
-import BuildResult from '../components/BuildResult';
 import BuildForm from '../components/BuildForm';
+import BuildResult from '../components/BuildResult';
 import OptimizeForm from '../components/OptimizeForm';
+import CustomErrorBoundary from '../components/ErrorBoundary';
+import useMarioKartData, { Build, StatType } from '../hooks/useMarioKartData';
 
 export const ErrorBoundary = CustomErrorBoundary;
 
 export default function IndexPage() {
-  const [parts, setParts] = useState<string[]>([]);
-  const [optimizeStats, setOptimizeStats] = useState<StatType[]>();
+  const [build, setBuild] = useState<Build>(null);
   const { loading, bodies, drivers, gliders, tires } = useMarioKartData();
-
-  console.dir(optimizeStats);
+  const handleOptimize = useCallback((stats: StatType[]) => {
+    console.dir(stats);
+  }, []);
 
   if (loading) {
     return (
@@ -42,20 +42,15 @@ export default function IndexPage() {
         drivers={drivers}
         bodies={bodies}
         tires={tires}
-        onSubmit={({ glider, driver, body, tire }) =>
-          setParts([glider, driver, body, tire])
-        }
+        onSubmit={setBuild}
       />
-      <OptimizeForm onSubmit={setOptimizeStats} />
+      <OptimizeForm onSubmit={handleOptimize} />
       <BuildResult
         gliders={gliders}
         drivers={drivers}
         bodies={bodies}
         tires={tires}
-        glider={parts[0]}
-        driver={parts[1]}
-        body={parts[2]}
-        tire={parts[3]}
+        build={build}
       />
     </Fragment>
   );
