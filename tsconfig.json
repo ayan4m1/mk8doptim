@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "jsx": "react-jsx",
+    "outDir": "./dist",
+    "target": "es6"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx"]
+}
