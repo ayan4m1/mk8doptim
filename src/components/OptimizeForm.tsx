@@ -1,3 +1,11 @@
+import { useFormik } from 'formik';
+import { useCallback, useRef } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCalculator,
+  faPlusCircle,
+  faRemove
+} from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
   Col,
@@ -8,15 +16,7 @@ import {
   Row
 } from 'react-bootstrap';
 
-import { StatType } from '../hooks/useMarioKartData';
-import { useFormik } from 'formik';
-import { useCallback, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faCalculator,
-  faPlusCircle,
-  faRemove
-} from '@fortawesome/free-solid-svg-icons';
+import { StatType } from '../utils';
 
 interface IProps {
   onSubmit: (stats: StatType[]) => void;
@@ -61,6 +61,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
             <Form.Select
               name="stats"
               hidden
+              multiple
               value={values.stats}
               onChange={handleChange}
             />

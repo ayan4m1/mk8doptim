@@ -9,13 +9,15 @@ import {
   faRefresh
 } from '@fortawesome/free-solid-svg-icons';
 
-import { Part } from '../hooks/useMarioKartData';
+import { Build, Part } from '../utils';
+import { useEffect } from 'react';
 
 interface IProps {
   gliders: Part[];
   drivers: Part[];
   bodies: Part[];
   tires: Part[];
+  build?: Build;
   onSubmit: (values: {
     glider: string;
     driver: string;
@@ -29,17 +31,29 @@ export default function BuildForm({
   drivers,
   bodies,
   tires,
+  build,
   onSubmit
 }: IProps) {
-  const { handleSubmit, handleChange, values } = useFormik({
+  const { handleSubmit, handleChange, setFieldValue, values } = useFormik({
     initialValues: {
-      glider: gliders[0].name,
-      driver: drivers[0].name,
       body: bodies[0].name,
+      driver: drivers[0].name,
+      glider: gliders[0].name,
       tire: tires[0].name
     },
     onSubmit
   });
+
+  useEffect(() => {
+    if (!build?.body || !build?.driver || !build?.glider || !build?.tire) {
+      return;
+    }
+
+    setFieldValue('body', build.body.name);
+    setFieldValue('driver', build.driver.name);
+    setFieldValue('glider', build.glider.name);
+    setFieldValue('tire', build.tire.name);
+  }, [build]);
 
   return (
     <Container fluid className="mt-4">
@@ -49,7 +63,7 @@ export default function BuildForm({
           <Form onSubmit={handleSubmit} className="d-flex flex-row">
             <Form.Group className="flex-grow-1 mx-2">
               <Form.Label>
-                <FontAwesomeIcon icon={faCar} /> Kart Body
+                <FontAwesomeIcon icon={faCar} /> Vehicle
               </Form.Label>
               <Form.Select
                 name="body"

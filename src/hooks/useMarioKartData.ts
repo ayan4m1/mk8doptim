@@ -1,56 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export enum StatType {
-  GroundSpeed = 'groundSpeed',
-  GroundHandling = 'groundHandling',
-  WaterSpeed = 'waterSpeed',
-  WaterHandling = 'waterHandling',
-  AirSpeed = 'airSpeed',
-  AirHandling = 'airHandling',
-  AntiGravitySpeed = 'antiGravitySpeed',
-  AntiGravityHandling = 'antiGravityHandling',
-  Acceleration = 'acceleration',
-  Weight = 'weight',
-  Traction = 'traction',
-  MiniTurbo = 'miniTurbo',
-  Invincibility = 'invincibility'
-}
-
-export type Build = {
-  body: string;
-  driver: string;
-  glider: string;
-  tire: string;
-};
-
-export type Part = {
-  name: string;
-  stats: Map<StatType, number>;
-};
-
-type RawPart = {
-  name: string;
-  [StatType.GroundSpeed]: number;
-  [StatType.GroundHandling]: number;
-  [StatType.WaterSpeed]: number;
-  [StatType.WaterHandling]: number;
-  [StatType.AirSpeed]: number;
-  [StatType.AirHandling]: number;
-  [StatType.AntiGravitySpeed]: number;
-  [StatType.AntiGravityHandling]: number;
-  [StatType.Acceleration]: number;
-  [StatType.Weight]: number;
-  [StatType.Traction]: number;
-  [StatType.MiniTurbo]: number;
-  [StatType.Invincibility]: number;
-};
-
-const parsePart = (rawPart: RawPart): Part => ({
-  name: rawPart.name,
-  stats: new Map<StatType, number>(
-    Object.values(StatType).map((stat) => [stat, rawPart[stat]])
-  )
-});
+import { parsePart, Part } from '../utils';
 
 export default function useMarioKartData() {
   const [bodies, setBodies] = useState<Part[]>(null);
