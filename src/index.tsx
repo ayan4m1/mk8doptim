@@ -1,23 +1,31 @@
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom';
 
 import './index.scss';
 import Layout from './components/Layout';
 import SuspenseFallback from './components/SuspenseFallback';
+import ErrorBoundary from './components/ErrorBoundary';
 
+const router = createHashRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    errorElement: <ErrorBoundary />,
+    children: [
+      {
+        index: true,
+        lazy: async () => ({
+          Component: (await import('./pages/index')).default
+        })
+      }
+    ]
+  }
+]);
 const root = createRoot(document.getElementById('root'));
 
-const IndexPage = lazy(() => import('./pages/index'));
-
 root.render(
-  <BrowserRouter>
-    <Suspense fallback={<SuspenseFallback />}>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route index element={<IndexPage />} />
-        </Route>
-      </Routes>
-    </Suspense>
-  </BrowserRouter>
+  <Suspense fallback={<SuspenseFallback />}>
+    <RouterProvider router={router} />
+  </Suspense>
 );

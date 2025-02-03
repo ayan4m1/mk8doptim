@@ -7,6 +7,8 @@ interface IProps {
   antiGravity: number;
 }
 
+const scalingFactor = 5 / 4;
+
 export default function TrackTypeBar({
   ground,
   water,
@@ -14,11 +16,19 @@ export default function TrackTypeBar({
   antiGravity
 }: IProps) {
   return (
-    <ProgressBar max={80} className="my-2">
-      <ProgressBar variant="success" now={ground} label={ground} />
-      <ProgressBar variant="info" now={water} label={water} />
-      <ProgressBar variant="light" now={air} label={air} />
-      <ProgressBar variant="warning" now={antiGravity} label={antiGravity} />
+    <ProgressBar className="my-2">
+      <ProgressBar
+        variant="success"
+        now={ground * scalingFactor}
+        label={ground}
+      />
+      <ProgressBar variant="info" now={water * scalingFactor} label={water} />
+      <ProgressBar variant="light" now={air * scalingFactor} label={air} />
+      <ProgressBar
+        variant="warning"
+        now={antiGravity * scalingFactor}
+        label={antiGravity}
+      />
     </ProgressBar>
   );
 }

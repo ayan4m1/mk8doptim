@@ -174,7 +174,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                 <Button
                   variant="success"
                   type="submit"
-                  disabled={!statMap.size}
+                  disabled={!statMap.size || remainingPercent > 0}
                 >
                   <FontAwesomeIcon icon={faCalculator} /> Calculate
                 </Button>

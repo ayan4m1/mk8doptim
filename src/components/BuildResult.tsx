@@ -100,16 +100,19 @@ export default function BuildResult({
 
   return (
     <Container className="mt-4">
-      <h2>Results</h2>
-      <h3>Best Track Type: {bestTrackType}</h3>
-      <h3>Stat Points: {totalStats} / 260</h3>
       <h3>
+        {parts.driver.name} on {parts.body.name} with {parts.tire.name} Tires
+        and {parts.glider.name}
+      </h3>
+      <h4>Best Track Type: {bestTrackType}</h4>
+      <h4>Stat Points: {totalStats} / 260</h4>
+      <h4>
         Quality:{' '}
         <span className={`text-${qualityRating > 0 ? 'success' : 'danger'}`}>
           {Math.abs(qualityRating)}% {qualityRating > 0 ? 'above' : 'below'}{' '}
           average
         </span>
-      </h3>
+      </h4>
       <BuildStats effectiveStats={effectiveStats} />
     </Container>
   );
