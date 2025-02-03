@@ -5,57 +5,68 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import BuildForm from '../components/BuildForm';
+import { Build, Part, StatSearch } from '../utils';
 import BuildResult from '../components/BuildResult';
 import OptimizeForm from '../components/OptimizeForm';
 import useMarioKartData from '../hooks/useMarioKartData';
 import CustomErrorBoundary from '../components/ErrorBoundary';
-import { Build, StatType } from '../utils';
 
 export const ErrorBoundary = CustomErrorBoundary;
+
+const createSortHandler = (weights: StatSearch) => (a: Part, b: Part) => {
+  let result = 0;
+
+  for (const stat of weights.keys()) {
+    result += b.stats.get(stat) - a.stats.get(stat);
+  }
+
+  // const otherStats = Object.values(StatType).filter(
+  //   (val) => !stats.includes(val)
+  // );
+
+  // for (const stat of otherStats) {
+  //   result += a.stats.get(stat) - b.stats.get(stat);
+  // }
+
+  return result;
+};
 
 export default function IndexPage() {
   const { loading, bodies, drivers, gliders, tires } = useMarioKartData();
   const [build, setBuild] = useState<Build>(null);
 
   const handleOptimize = useCallback(
-    (stats: StatType[]) => {
+    (weights: StatSearch) => {
       const sortedBodies = [...bodies];
+      const sortedDrivers = [...drivers];
+      const sortedGliders = [...gliders];
+      const sortedTires = [...tires];
+      const sortHandler = createSortHandler(weights);
 
-      for (const stat of stats) {
-        sortedBodies.sort((a, b) => b.stats.get(stat) - a.stats.get(stat));
-      }
+      sortedBodies.sort(sortHandler);
+      sortedDrivers.sort(sortHandler);
+      sortedGliders.sort(sortHandler);
+      sortedTires.sort(sortHandler);
+
+      console.dir(sortedBodies.slice(0, 5));
+      console.dir(sortedDrivers.slice(0, 5));
+      console.dir(sortedGliders.slice(0, 5));
+      console.dir(sortedTires.slice(0, 5));
 
       const body = sortedBodies.shift();
-      const sortedDrivers = [...drivers];
-
-      for (const stat of stats) {
-        sortedDrivers.sort((a, b) => b.stats.get(stat) - a.stats.get(stat));
-      }
-
       const driver = sortedDrivers.shift();
-      const sortedGliders = [...gliders];
-
-      for (const stat of stats) {
-        sortedGliders.sort((a, b) => b.stats.get(stat) - a.stats.get(stat));
-      }
-
       const glider = sortedGliders.shift();
-      const sortedTires = [...tires];
-
-      for (const stat of stats) {
-        sortedTires.sort((a, b) => b.stats.get(stat) - a.stats.get(stat));
-      }
-
       const tire = sortedTires.shift();
-
-      setBuild({
+      const newBuild = {
         body,
         driver,
         glider,
         tire
-      });
+      };
+
+      setBuild(newBuild);
     },
-    [bodies, drivers, gliders, tires]
+    [bodies, drivers, gliders, tires, setBuild]
   );
 
   if (loading) {
