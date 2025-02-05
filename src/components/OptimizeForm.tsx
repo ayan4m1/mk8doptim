@@ -1,4 +1,12 @@
-import { FormEvent, useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  Fragment,
+  useCallback,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCalculator,
@@ -7,31 +15,35 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
+  Card,
+  CloseButton,
   Col,
   Container,
   Form,
   InputGroup,
-  ListGroup,
   ProgressBar,
   Row
 } from 'react-bootstrap';
 
 import {
+  CalculationMode,
   getRemainingPercent,
-  StatSearch,
+  StatMapping,
   StatType,
   StatTypeAbbreviations,
   StatTypeColors
 } from '../utils';
 
 interface IProps {
-  onSubmit: (stats: StatSearch) => void;
+  onSubmit: (mode: string, weights?: StatMapping) => void;
 }
 
 export default function OptimizeForm({ onSubmit }: IProps) {
+  const [showInstructions, setShowInstructions] = useState<boolean>(false);
+  const [mode, setMode] = useState<CalculationMode>(CalculationMode.Overall);
   const statRef = useRef<HTMLSelectElement>(null);
   const weightRef = useRef<HTMLInputElement>(null);
-  const [statMap, setStatMap] = useState<StatSearch>(
+  const [statMap, setStatMap] = useState<StatMapping>(
     new Map<StatType, number>()
   );
   const remainingPercent = useMemo(
@@ -41,7 +53,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
   const handleSubmit = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      onSubmit(statMap);
+      onSubmit(mode, statMap);
     },
     [statMap]
   );
@@ -80,106 +92,135 @@ export default function OptimizeForm({ onSubmit }: IProps) {
     () => setStatMap(new Map<StatType, number>()),
     []
   );
-  // const handleStatRemove = useCallback(() => {
-  //   if (!statRef.current) {
-  //     return;
-  //   }
-
-  //   const statType = statRef.current.value as StatType;
-
-  //   if (!statMap.current.has(statType)) {
-  //     return;
-  //   }
-
-  //   statMap.current.delete(statType);
-  // }, [statRef]);
+  const handleDismissInstructions = useCallback(
+    () => setShowInstructions(false),
+    [setShowInstructions]
+  );
+  const handleUpdateMode = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const newMode = event.target.value as CalculationMode;
+      setMode(newMode);
+      if (newMode === 'weighted' && !showInstructions) {
+        setShowInstructions(true);
+      } else if (newMode !== 'weighted' && showInstructions) {
+        setShowInstructions(false);
+      }
+    },
+    [setMode, showInstructions]
+  );
 
   return (
-    <Container fluid className="mt-4">
+    <Container fluid>
       <h2>Optimize</h2>
+      {showInstructions && (
+        <Card bg="info" body className="my-2">
+          <Row className="d-flex">
+            <Col>
+              <Card.Title>Instructions</Card.Title>
+            </Col>
+            <Col className="ms-auto text-end">
+              <CloseButton onClick={handleDismissInstructions} />
+            </Col>
+          </Row>
+          <Card.Text>
+            You must assign a weighting value (in percent) to each statistic
+            that you care about. For example, 100% Ground Speed would find you
+            the builds with the highest ground speed, to the exclusion of all
+            other stats. To add a stat weight, select the stat from the
+            dropdown, enter the percentage in the text box to its right, and
+            click Add. When you have added 100% total weighting, you will be
+            able to click Calculate. This will then show you the builds which
+            provide the best stats given the weights you have supplied.
+          </Card.Text>
+          <Card.Text></Card.Text>
+        </Card>
+      )}
       <Row>
         <Col xs={12}>
           <Form onSubmit={handleSubmit}>
-            <Row>
-              <Col xs={8} className="pe-0">
-                <Form.Select ref={statRef}>
-                  {Object.entries(StatType).map(([key, val]) => (
-                    <option key={key} value={val}>
-                      {key.replace(/([^^])([A-Z])/g, '$1 $2')}
-                    </option>
-                  ))}
+            <Row className="mb-2">
+              <Col xs={12} className="d-flex">
+                <Form.Select
+                  onChange={handleUpdateMode}
+                  className="flex-fill me-2"
+                >
+                  <option value="overall">Overall</option>
+                  <option value="weighted">Weighted</option>
                 </Form.Select>
-              </Col>
-              <Col xs={2}>
-                <InputGroup>
-                  <Form.Control
-                    min={0}
-                    max={remainingPercent}
-                    type="number"
-                    ref={weightRef}
-                    disabled={remainingPercent <= 0}
-                  />
-                  <InputGroup.Text>%</InputGroup.Text>
-                </InputGroup>
-              </Col>
-              <Col xs={2} className="d-flex">
-                <Button
-                  variant="success"
-                  type="button"
-                  onClick={handleStatAdd}
-                  className="flex-fill me-1"
-                  disabled={remainingPercent <= 0}
-                >
-                  <FontAwesomeIcon icon={faPlusCircle} /> Add
-                </Button>
-                <Button
-                  variant="danger"
-                  type="button"
-                  onClick={handleStatClear}
-                  className="flex-fill ms-1"
-                >
-                  <FontAwesomeIcon icon={faEraser} /> Clear
-                </Button>
+                {mode === 'overall' && (
+                  <Button variant="success" type="submit">
+                    <FontAwesomeIcon icon={faCalculator} /> Calculate
+                  </Button>
+                )}
               </Col>
             </Row>
-            <Row>
-              <Col xs={12}>
-                <ListGroup className="my-4">
-                  <ProgressBar max={100}>
-                    {Array.from(statMap.entries()).map(([type, weight]) => (
-                      <ProgressBar
-                        key={type}
-                        now={weight * 1e2}
-                        style={{ backgroundColor: StatTypeColors[type] }}
-                        label={StatTypeAbbreviations[type]}
+            {mode === 'weighted' && (
+              <Fragment>
+                <Row>
+                  <Col xs={8} className="pe-0">
+                    <Form.Select ref={statRef}>
+                      {Object.entries(StatType).map(([key, val]) => (
+                        <option key={key} value={val}>
+                          {key.replace(/([^^])([A-Z])/g, '$1 $2')}
+                        </option>
+                      ))}
+                    </Form.Select>
+                  </Col>
+                  <Col xs={2}>
+                    <InputGroup>
+                      <Form.Control
+                        min={0}
+                        max={remainingPercent}
+                        type="number"
+                        ref={weightRef}
+                        disabled={remainingPercent <= 0}
                       />
-                      // { <span>
-                      //   {index + 1}.{' '}
-                      //   {`${type[0].toLocaleUpperCase()}${type.substring(1)}`.replace(
-                      //     /([^^])([A-Z])/g,
-                      //     '$1 $2'
-                      //   )}
-                      // </span>
-                      // <Button
-                      //   size="sm"
-                      //   variant="danger"
-                      //   className="ms-auto"
-                      //   onClick={() => handleStatRemove(type)}
-                      // >
-                      //   <FontAwesomeIcon icon={faRemove} fixedWidth />
-                      // </Button>}
-                    ))}
-                  </ProgressBar>
-                </ListGroup>
-                <Button
-                  variant="success"
-                  type="submit"
-                  disabled={!statMap.size || remainingPercent > 0}
-                >
-                  <FontAwesomeIcon icon={faCalculator} /> Calculate
-                </Button>
-              </Col>
-            </Row>
+                      <InputGroup.Text>%</InputGroup.Text>
+                    </InputGroup>
+                  </Col>
+                  <Col xs={2} className="d-flex">
+                    <Button
+                      variant="success"
+                      type="button"
+                      onClick={handleStatAdd}
+                      className="flex-fill me-1"
+                      disabled={remainingPercent <= 0}
+                    >
+                      <FontAwesomeIcon icon={faPlusCircle} /> Add
+                    </Button>
+                    <Button
+                      variant="danger"
+                      type="button"
+                      onClick={handleStatClear}
+                      className="flex-fill ms-1"
+                    >
+                      <FontAwesomeIcon icon={faEraser} /> Clear
+                    </Button>
+                  </Col>
+                </Row>
+                <Row className="mt-2">
+                  <Col xs={12} className="d-flex align-items-center">
+                    <ProgressBar max={100} className="flex-fill me-2">
+                      {Array.from(statMap.entries()).map(([type, weight]) => (
+                        <ProgressBar
+                          key={type}
+                          now={weight * 1e2}
+                          style={{ backgroundColor: StatTypeColors[type] }}
+                          label={StatTypeAbbreviations[type]}
+                        />
+                      ))}
+                    </ProgressBar>
+                    <Button
+                      variant="success"
+                      type="submit"
+                      disabled={!statMap.size || remainingPercent > 0}
+                    >
+                      <FontAwesomeIcon icon={faCalculator} /> Calculate
+                    </Button>
+                  </Col>
+                </Row>
+              </Fragment>
+            )}
           </Form>
         </Col>
       </Row>

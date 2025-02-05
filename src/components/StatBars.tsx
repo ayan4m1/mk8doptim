@@ -2,21 +2,25 @@ import { Fragment } from 'react';
 import { Col, Row, ProgressBar } from 'react-bootstrap';
 
 import TrackTypeBar from './TrackTypeBar';
-import { StatType } from '../utils';
+import { StatType, StatMapping } from '../utils';
 
-export default function BuildStats({ effectiveStats }) {
+interface IProps {
+  stats: StatMapping;
+}
+
+export default function StatBars({ stats }: IProps) {
   return (
     <Fragment>
-      <Row>
+      <Row className="mb-2">
         <Col xs={4} className="text-end">
           Speed
         </Col>
         <Col xs={8}>
           <TrackTypeBar
-            ground={effectiveStats.get(StatType.GroundSpeed)}
-            water={effectiveStats.get(StatType.WaterSpeed)}
-            air={effectiveStats.get(StatType.AirSpeed)}
-            antiGravity={effectiveStats.get(StatType.AntiGravitySpeed)}
+            ground={stats.get(StatType.GroundSpeed)}
+            water={stats.get(StatType.WaterSpeed)}
+            air={stats.get(StatType.AirSpeed)}
+            antiGravity={stats.get(StatType.AntiGravitySpeed)}
           />
         </Col>
       </Row>
@@ -26,8 +30,8 @@ export default function BuildStats({ effectiveStats }) {
         </Col>
         <Col xs={8}>
           <ProgressBar
-            label={effectiveStats.get(StatType.Acceleration)}
-            now={effectiveStats.get(StatType.Acceleration)}
+            label={stats.get(StatType.Acceleration)}
+            now={stats.get(StatType.Acceleration)}
             variant="success"
             max={23}
           />
@@ -39,8 +43,8 @@ export default function BuildStats({ effectiveStats }) {
         </Col>
         <Col xs={8}>
           <ProgressBar
-            label={effectiveStats.get(StatType.Weight)}
-            now={effectiveStats.get(StatType.Weight)}
+            label={stats.get(StatType.Weight)}
+            now={stats.get(StatType.Weight)}
             variant="danger"
             max={23}
           />
@@ -52,10 +56,10 @@ export default function BuildStats({ effectiveStats }) {
         </Col>
         <Col xs={8}>
           <TrackTypeBar
-            ground={effectiveStats.get(StatType.GroundHandling)}
-            water={effectiveStats.get(StatType.WaterHandling)}
-            air={effectiveStats.get(StatType.AirHandling)}
-            antiGravity={effectiveStats.get(StatType.AntiGravityHandling)}
+            ground={stats.get(StatType.GroundHandling)}
+            water={stats.get(StatType.WaterHandling)}
+            air={stats.get(StatType.AirHandling)}
+            antiGravity={stats.get(StatType.AntiGravityHandling)}
           />
         </Col>
       </Row>
@@ -65,8 +69,8 @@ export default function BuildStats({ effectiveStats }) {
         </Col>
         <Col xs={8}>
           <ProgressBar
-            label={effectiveStats.get(StatType.Traction)}
-            now={effectiveStats.get(StatType.Traction)}
+            label={stats.get(StatType.Traction)}
+            now={stats.get(StatType.Traction)}
             variant="warning"
             max={23}
           />
@@ -78,8 +82,8 @@ export default function BuildStats({ effectiveStats }) {
         </Col>
         <Col xs={8}>
           <ProgressBar
-            label={effectiveStats.get(StatType.MiniTurbo)}
-            now={effectiveStats.get(StatType.MiniTurbo)}
+            label={stats.get(StatType.MiniTurbo)}
+            now={stats.get(StatType.MiniTurbo)}
             variant="danger"
             max={23}
           />
@@ -91,8 +95,8 @@ export default function BuildStats({ effectiveStats }) {
         </Col>
         <Col xs={8}>
           <ProgressBar
-            label={effectiveStats.get(StatType.Invincibility)}
-            now={effectiveStats.get(StatType.Invincibility)}
+            label={stats.get(StatType.Invincibility)}
+            now={stats.get(StatType.Invincibility)}
             variant="info"
             max={23}
           />

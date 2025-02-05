@@ -1,3 +1,8 @@
+export enum CalculationMode {
+  Overall = 'overall',
+  Weighted = 'weighted'
+}
+
 export enum StatType {
   GroundSpeed = 'groundSpeed',
   GroundHandling = 'groundHandling',
@@ -46,13 +51,20 @@ export const StatTypeColors = {
   [StatType.Invincibility]: '#52007a'
 };
 
-export type StatSearch = Map<StatType, number>;
+export type StatMapping = Map<StatType, number>;
 
 export type Build = {
   body: Part;
   driver: Part;
   glider: Part;
   tire: Part;
+};
+
+export type EquivalentBuilds = {
+  bodies: Part[];
+  drivers: Part[];
+  gliders: Part[];
+  tires: Part[];
 };
 
 export enum PartType {
@@ -65,7 +77,7 @@ export enum PartType {
 export type Part = {
   name: string;
   type?: PartType;
-  stats: Map<StatType, number>;
+  stats: StatMapping;
 };
 
 type RawPart = {
@@ -92,27 +104,56 @@ export const parsePart = (rawPart: RawPart): Part => ({
   )
 });
 
-export const calculateStats = (
-  build: Build,
-  types: StatType[] = Object.values(StatType)
-): Map<StatType, number> =>
-  new Map<StatType, number>(
-    types.map((type) => [type, calculateStat(build, type)])
+export const getTotalStatScore = (mapping: StatMapping): number =>
+  Array.from(mapping.values()).reduce(
+    (sum, val) => sum + (isNaN(val) ? 0 : val),
+    0
   );
 
-export const calculateStat = (build: Build, type: StatType): number =>
-  build.glider.stats.get(type) +
-  build.driver.stats.get(type) +
-  build.body.stats.get(type) +
-  build.tire.stats.get(type);
+export const calculateWeightedStats = (
+  build: Build,
+  weights: StatMapping
+): StatMapping =>
+  new Map<StatType, number>(
+    Object.values(StatType).map((type) => [
+      type,
+      calculateStat(build, type, weights.get(type) ?? 0)
+    ])
+  );
 
-export const getRemainingPercent = (weights?: StatSearch): number => {
+export const calculateStats = (build: Build): StatMapping =>
+  new Map<StatType, number>(
+    Object.values(StatType).map((type) => [type, calculateStat(build, type, 1)])
+  );
+
+export const calculateStat = (
+  build: Build,
+  type: StatType,
+  weight: number
+): number =>
+  (build.glider.stats.get(type) +
+    build.driver.stats.get(type) +
+    build.body.stats.get(type) +
+    build.tire.stats.get(type)) *
+  weight;
+
+export const getRemainingPercent = (weights?: StatMapping): number => {
   if (!weights) {
     return 100;
   }
 
-  return (
-    100 -
-    Array.from(weights.values()).reduce((sum, weight) => sum + weight, 0) * 1e2
+  return Math.min(
+    100,
+    Math.max(
+      0,
+      Math.round(
+        100 -
+          Array.from(weights.values()).reduce(
+            (sum, weight) => sum + weight,
+            0
+          ) *
+            1e2
+      )
+    )
   );
 };

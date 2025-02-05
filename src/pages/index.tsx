@@ -1,53 +1,70 @@
+import uniq from 'lodash.uniq';
 import { Helmet } from 'react-helmet';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Fragment, useCallback, useState } from 'react';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { Build, Part, StatSearch } from '../utils';
 import BuildResult from '../components/BuildResult';
 import OptimizeForm from '../components/OptimizeForm';
 import useMarioKartData from '../hooks/useMarioKartData';
-
-const createSortHandler = (weights: StatSearch) => (a: Part, b: Part) => {
-  let result = 0;
-
-  for (const [stat, weight] of weights.entries()) {
-    result += (b.stats.get(stat) - a.stats.get(stat)) * weight;
-  }
-
-  return result;
-};
+import {
+  Build,
+  calculateStats,
+  calculateWeightedStats,
+  getTotalStatScore,
+  EquivalentBuilds,
+  StatMapping
+} from '../utils';
 
 export default function IndexPage() {
   const { loading, bodies, drivers, gliders, tires } = useMarioKartData();
-  const [builds, setBuilds] = useState<Build[]>(null);
+  const [builds, setBuilds] = useState<EquivalentBuilds>(null);
 
   const handleOptimize = useCallback(
-    (weights: StatSearch) => {
-      const sortedBodies = [...bodies];
-      const sortedDrivers = [...drivers];
-      const sortedGliders = [...gliders];
-      const sortedTires = [...tires];
-      const sortHandler = createSortHandler(weights);
+    (mode: string, weights?: StatMapping) => {
+      let topScore = 0,
+        equivalentBuilds: Build[] = [];
 
-      sortedBodies.sort(sortHandler);
-      sortedDrivers.sort(sortHandler);
-      sortedGliders.sort(sortHandler);
-      sortedTires.sort(sortHandler);
+      for (const body of bodies) {
+        for (const driver of drivers) {
+          for (const glider of gliders) {
+            for (const tire of tires) {
+              const build = {
+                body,
+                driver,
+                glider,
+                tire
+              };
 
-      const results: Build[] = [];
+              let totalScore = 0;
 
-      for (let i = 0; i < 5; i++) {
-        results.push({
-          body: sortedBodies.shift(),
-          driver: sortedDrivers.shift(),
-          glider: sortedGliders.shift(),
-          tire: sortedTires.shift()
-        });
+              if (mode === 'overall') {
+                totalScore = getTotalStatScore(calculateStats(build));
+              } else if (mode === 'weighted') {
+                totalScore = getTotalStatScore(
+                  calculateWeightedStats(build, weights)
+                );
+              }
+
+              if (totalScore > topScore) {
+                equivalentBuilds = [];
+                equivalentBuilds.push(build);
+                topScore = totalScore;
+              } else if (totalScore === topScore) {
+                equivalentBuilds.push(build);
+              }
+            }
+          }
+        }
       }
 
-      setBuilds(results);
+      setBuilds({
+        bodies: uniq(equivalentBuilds.map((build) => build.body)),
+        drivers: uniq(equivalentBuilds.map((build) => build.driver)),
+        gliders: uniq(equivalentBuilds.map((build) => build.glider)),
+        tires: uniq(equivalentBuilds.map((build) => build.tire))
+      });
     },
     [bodies, drivers, gliders, tires, setBuilds]
   );
@@ -71,33 +88,7 @@ export default function IndexPage() {
     <Fragment>
       <Helmet title="Mario Kart 8 Optimizer" />
       <OptimizeForm onSubmit={handleOptimize} />
-      {/* <BuildForm
-        gliders={gliders}
-        drivers={drivers}
-        bodies={bodies}
-        tires={tires}
-        onSubmit={({ body, driver, glider, tire }) =>
-          setBuilds([
-            {
-              body: bodies.find((item) => item.name === body),
-              driver: drivers.find((item) => item.name === driver),
-              glider: gliders.find((item) => item.name === glider),
-              tire: tires.find((item) => item.name === tire)
-            }
-          ])
-        }
-      /> */}
-      {builds?.length
-        ? builds.map((build) => (
-            <BuildResult
-              gliders={gliders}
-              drivers={drivers}
-              bodies={bodies}
-              tires={tires}
-              build={build}
-            />
-          ))
-        : null}
+      <BuildResult builds={builds} />
     </Fragment>
   );
 }
