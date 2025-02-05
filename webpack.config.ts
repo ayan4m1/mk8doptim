@@ -22,7 +22,7 @@ const plugins = [
   }),
   new MiniCssExtractPlugin(),
   new CnameWebpackPlugin({
-    domain: 'mk8doptim.andrewdelisa.com'
+    domain: 'mk8d.andrewdelisa.com'
   })
 ];
 
