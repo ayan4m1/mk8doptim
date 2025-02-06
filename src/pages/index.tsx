@@ -41,15 +41,14 @@ export default function IndexPage() {
 
               if (mode === 'overall') {
                 totalScore = getTotalStatScore(calculateStats(build));
-              } else if (mode === 'weighted') {
+              } else {
                 totalScore = getTotalStatScore(
                   calculateWeightedStats(build, weights)
                 );
               }
 
               if (totalScore > topScore) {
-                equivalentBuilds = [];
-                equivalentBuilds.push(build);
+                equivalentBuilds = [build];
                 topScore = totalScore;
               } else if (totalScore === topScore) {
                 equivalentBuilds.push(build);

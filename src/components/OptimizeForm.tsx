@@ -28,6 +28,7 @@ import {
 import {
   CalculationMode,
   getRemainingPercent,
+  mappingPresets,
   StatMapping,
   StatType,
   StatTypeAbbreviations,
@@ -99,14 +100,18 @@ export default function OptimizeForm({ onSubmit }: IProps) {
   const handleUpdateMode = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const newMode = event.target.value as CalculationMode;
+
       setMode(newMode);
+      if (newMode !== 'weighted' && newMode !== 'overall') {
+        setStatMap(mappingPresets.get(newMode));
+      }
       if (newMode === 'weighted' && !showInstructions) {
         setShowInstructions(true);
       } else if (newMode !== 'weighted' && showInstructions) {
         setShowInstructions(false);
       }
     },
-    [setMode, showInstructions]
+    [setMode, setStatMap, showInstructions]
   );
 
   return (
@@ -145,7 +150,12 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                   className="flex-fill me-2"
                 >
                   <option value="overall">Overall</option>
-                  <option value="weighted">Weighted</option>
+                  {Array.from(mappingPresets.entries()).map(([name]) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                  <option value="weighted">Custom Weights</option>
                 </Form.Select>
                 {mode === 'overall' && (
                   <Button variant="success" type="submit">
@@ -154,7 +164,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                 )}
               </Col>
             </Row>
-            {mode === 'weighted' && (
+            {mode !== 'overall' && (
               <Fragment>
                 <Row>
                   <Col xs={8} className="pe-0">
@@ -193,6 +203,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                       type="button"
                       onClick={handleStatClear}
                       className="flex-fill ms-1"
+                      disabled={remainingPercent === 100}
                     >
                       <FontAwesomeIcon icon={faEraser} /> Clear
                     </Button>
@@ -201,14 +212,15 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                 <Row className="mt-2">
                   <Col xs={12} className="d-flex align-items-center">
                     <ProgressBar max={100} className="flex-fill me-2">
-                      {Array.from(statMap.entries()).map(([type, weight]) => (
-                        <ProgressBar
-                          key={type}
-                          now={weight * 1e2}
-                          style={{ backgroundColor: StatTypeColors[type] }}
-                          label={StatTypeAbbreviations[type]}
-                        />
-                      ))}
+                      {statMap?.entries() &&
+                        Array.from(statMap.entries()).map(([type, weight]) => (
+                          <ProgressBar
+                            key={type}
+                            now={weight * 1e2}
+                            style={{ backgroundColor: StatTypeColors[type] }}
+                            label={StatTypeAbbreviations[type]}
+                          />
+                        ))}
                     </ProgressBar>
                     <Button
                       variant="success"
