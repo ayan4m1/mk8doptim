@@ -84,8 +84,6 @@ export default function BuildResult({ builds }: IProps) {
     return name;
   }, [buildStats]);
 
-  console.dir(buildStats);
-
   return (
     <Container className="mt-4">
       <h2>Results</h2>
