@@ -20,6 +20,13 @@ interface IProps {
   builds: EquivalentBuilds;
 }
 
+const partStatMax = new Map<StatType, number>(
+  Object.values(StatType).map((type) => [type, 10])
+);
+const totalStatMax = new Map<StatType, number>(
+  Object.values(StatType).map((type) => [type, 20])
+);
+
 export default function BuildResult({ builds }: IProps) {
   if (!builds?.bodies.length) {
     return null;
@@ -131,16 +138,22 @@ export default function BuildResult({ builds }: IProps) {
       </Row>
       <Row className="my-4">
         <Col xs={3}>
-          <StatBars stats={effectiveParts.body.stats} />
+          <StatBars stats={effectiveParts.body.stats} maxStats={partStatMax} />
         </Col>
         <Col xs={3}>
-          <StatBars stats={effectiveParts.driver.stats} />
+          <StatBars
+            stats={effectiveParts.driver.stats}
+            maxStats={partStatMax}
+          />
         </Col>
         <Col xs={3}>
-          <StatBars stats={effectiveParts.glider.stats} />
+          <StatBars
+            stats={effectiveParts.glider.stats}
+            maxStats={partStatMax}
+          />
         </Col>
         <Col xs={3}>
-          <StatBars stats={effectiveParts.tire.stats} />
+          <StatBars stats={effectiveParts.tire.stats} maxStats={partStatMax} />
         </Col>
       </Row>
       <h4>Overall Stats</h4>
@@ -153,7 +166,7 @@ export default function BuildResult({ builds }: IProps) {
           average
         </span>
       </h6>
-      <StatBars stats={buildStats} />
+      <StatBars stats={buildStats} maxStats={totalStatMax} />
     </Container>
   );
 }

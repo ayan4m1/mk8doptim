@@ -56,7 +56,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
       event.preventDefault();
       onSubmit(mode, statMap);
     },
-    [statMap]
+    [mode, statMap, onSubmit]
   );
   const handleStatAdd = useCallback(() => {
     if (!statRef.current || !weightRef.current) {
@@ -71,16 +71,12 @@ export default function OptimizeForm({ onSubmit }: IProps) {
 
     const statType = statRef.current.value as StatType;
 
-    if (statMap.has(statType)) {
-      return;
-    }
-
     setStatMap((map) => {
       if (map.has(statType)) {
         return map;
       }
 
-      const newMap = new Map<StatType, number>(statMap);
+      const newMap = new Map<StatType, number>(map);
 
       newMap.set(statType, parseInt(weightRef.current.value, 10) / 1e2);
 
@@ -159,7 +155,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                 </Form.Select>
                 {mode === 'overall' && (
                   <Button variant="success" type="submit">
-                    <FontAwesomeIcon icon={faCalculator} /> Calculate
+                    <FontAwesomeIcon fixedWidth icon={faCalculator} /> Calculate
                   </Button>
                 )}
               </Col>
