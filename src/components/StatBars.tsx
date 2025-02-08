@@ -28,7 +28,7 @@ export default function StatBars({ stats, maxStats }: IProps) {
             <StatBar
               key={index}
               stat={list}
-              maxValue={Array.from(Object.values(maxStats))[0]}
+              maxValue={maxStats.values().next().value}
               value={list.map((type) => stats.get(type))}
             />
           );

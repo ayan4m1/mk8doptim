@@ -8,8 +8,6 @@ interface IProps {
   max: number;
 }
 
-const scalingFactor = 5 / 4;
-
 export default function TrackTypeBar({ stats, values, max }: IProps) {
   return (
     <ProgressBar>
@@ -17,9 +15,9 @@ export default function TrackTypeBar({ stats, values, max }: IProps) {
         values.map((value, index) => (
           <ProgressBar
             key={index}
-            now={value * scalingFactor}
             label={value}
-            max={max * scalingFactor}
+            now={value}
+            max={max * 4}
             style={{ backgroundColor: StatTypeColors[stats[index]] }}
           />
         ))}
