@@ -90,7 +90,7 @@ export const StatTypeColors = {
   [StatType.AirHandling]: '#48b4e0',
   [StatType.AntiGravitySpeed]: '#ff00ff',
   [StatType.AntiGravityHandling]: '#cc00cc',
-  [StatType.Acceleration]: '#39dc14',
+  [StatType.Acceleration]: '#33c612',
   [StatType.Weight]: '#7289da',
   [StatType.Traction]: '#a8033f',
   [StatType.MiniTurbo]: '#ce3a00',
