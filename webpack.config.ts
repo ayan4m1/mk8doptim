@@ -104,7 +104,7 @@ const config: Configuration = {
   },
   output: {
     path: resolve(__dirname, 'dist'),
-    filename: 'main.js',
+    filename: '[name].js',
     chunkFilename: '[name].js'
   },
   plugins,
@@ -113,7 +113,21 @@ const config: Configuration = {
     modules: ['node_modules', 'src']
   },
   optimization: {
-    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()]
+    minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
+    splitChunks: {
+      cacheGroups: {
+        commons: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          chunks: 'all'
+        },
+        data: {
+          test: /[\\/]data[\\/].*csv$/,
+          name: 'data',
+          chunks: 'all'
+        }
+      }
+    }
   },
   ignoreWarnings: [/import rules are/]
 };
