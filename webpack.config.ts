@@ -37,8 +37,7 @@ if (dev) {
       customSyntax: 'postcss-scss'
     }),
     new ESLintPlugin({
-      configType: 'flat',
-      eslintPath: 'eslint/use-at-your-own-risk'
+      configType: 'flat'
     })
   );
 }
