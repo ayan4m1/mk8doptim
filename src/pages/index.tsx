@@ -87,7 +87,7 @@ export default function IndexPage() {
     <Fragment>
       <Helmet title="Mario Kart 8 Optimizer" />
       <OptimizeForm onSubmit={handleOptimize} />
-      <BuildResult builds={builds} />
+      {builds?.bodies.length && <BuildResult builds={builds} />}
     </Fragment>
   );
 }

@@ -28,7 +28,7 @@ import {
 import {
   CalculationMode,
   getRemainingPercent,
-  mappingPresets,
+  MappingPresets,
   StatMapping,
   StatType,
   StatTypeAbbreviations,
@@ -99,7 +99,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
 
       setMode(newMode);
       if (newMode !== 'weighted' && newMode !== 'overall') {
-        setStatMap(mappingPresets.get(newMode));
+        setStatMap(MappingPresets.get(newMode));
       }
       if (newMode === 'weighted' && !showInstructions) {
         setShowInstructions(true);
@@ -111,7 +111,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
   );
 
   return (
-    <Container fluid>
+    <Container>
       <h2>Optimize</h2>
       {showInstructions && (
         <Card bg="info" body className="my-2">
@@ -146,7 +146,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                   className="flex-fill me-2"
                 >
                   <option value="overall">Overall</option>
-                  {Array.from(mappingPresets.entries()).map(([name]) => (
+                  {Array.from(MappingPresets.entries()).map(([name]) => (
                     <option key={name} value={name}>
                       {name}
                     </option>

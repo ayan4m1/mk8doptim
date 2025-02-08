@@ -6,7 +6,7 @@ import { faSortAmountAsc } from '@fortawesome/free-solid-svg-icons';
 export default function Header() {
   return (
     <Navbar expand="lg" variant="dark">
-      <Container>
+      <Container fluid="sm">
         <Navbar.Brand>
           <Nav.Link as={Link} to="/">
             <FontAwesomeIcon fixedWidth icon={faSortAmountAsc} size="lg" />{' '}

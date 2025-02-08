@@ -10,7 +10,7 @@ export default function Layout() {
     <Fragment>
       <Helmet titleTemplate="mk8doptim - %s" />
       <Header />
-      <Container>
+      <Container fluid="sm" style={{ minWidth: '100%', maxWidth: 'unset' }}>
         <Outlet />
       </Container>
     </Fragment>

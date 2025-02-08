@@ -6,6 +6,8 @@ import {
   calculateStats,
   EquivalentBuilds,
   getTotalStatScore,
+  PartType,
+  StatMaxes,
   StatType
 } from '../utils';
 import {
@@ -20,18 +22,11 @@ interface IProps {
   builds: EquivalentBuilds;
 }
 
-const partStatMax = new Map<StatType, number>(
-  Object.values(StatType).map((type) => [type, 10])
-);
 const totalStatMax = new Map<StatType, number>(
   Object.values(StatType).map((type) => [type, 20])
 );
 
 export default function BuildResult({ builds }: IProps) {
-  if (!builds?.bodies.length) {
-    return null;
-  }
-
   const effectiveParts = useMemo(
     () => ({
       body: builds.bodies[0],
@@ -45,10 +40,7 @@ export default function BuildResult({ builds }: IProps) {
     () => calculateStats(effectiveParts),
     [effectiveParts]
   );
-  const totalScore = useMemo(
-    () => getTotalStatScore(buildStats),
-    [effectiveParts]
-  );
+  const totalScore = useMemo(() => getTotalStatScore(buildStats), [buildStats]);
   const qualityRating = useMemo(
     () => Math.round((totalScore / 260 - 0.5) * 1e2),
     [totalScore]
@@ -95,7 +87,7 @@ export default function BuildResult({ builds }: IProps) {
     <Container className="mt-4">
       <h2>Results</h2>
       <Row className="mb-2">
-        <Col xs={3}>
+        <Col sm={12} md={3}>
           <h5>
             <FontAwesomeIcon icon={faCar} /> Vehicles
           </h5>
@@ -105,7 +97,7 @@ export default function BuildResult({ builds }: IProps) {
             ))}
           </ListGroup>
         </Col>
-        <Col xs={3}>
+        <Col sm={12} md={3}>
           <h5>
             <FontAwesomeIcon icon={faHelmetSafety} /> Drivers
           </h5>
@@ -115,7 +107,7 @@ export default function BuildResult({ builds }: IProps) {
             ))}
           </ListGroup>
         </Col>
-        <Col xs={3}>
+        <Col sm={12} md={3}>
           <h5>
             <FontAwesomeIcon icon={faPaperPlane} /> Gliders
           </h5>
@@ -125,7 +117,7 @@ export default function BuildResult({ builds }: IProps) {
             ))}
           </ListGroup>
         </Col>
-        <Col xs={3}>
+        <Col sm={12} md={3}>
           <h5>
             <FontAwesomeIcon icon={faCircleDot} /> Tires
           </h5>
@@ -138,22 +130,28 @@ export default function BuildResult({ builds }: IProps) {
       </Row>
       <Row className="my-4">
         <Col xs={3}>
-          <StatBars stats={effectiveParts.body.stats} maxStats={partStatMax} />
+          <StatBars
+            stats={effectiveParts.body.stats}
+            maxStats={StatMaxes.get(PartType.Body)}
+          />
         </Col>
         <Col xs={3}>
           <StatBars
             stats={effectiveParts.driver.stats}
-            maxStats={partStatMax}
+            maxStats={StatMaxes.get(PartType.Driver)}
           />
         </Col>
         <Col xs={3}>
           <StatBars
             stats={effectiveParts.glider.stats}
-            maxStats={partStatMax}
+            maxStats={StatMaxes.get(PartType.Glider)}
           />
         </Col>
         <Col xs={3}>
-          <StatBars stats={effectiveParts.tire.stats} maxStats={partStatMax} />
+          <StatBars
+            stats={effectiveParts.tire.stats}
+            maxStats={StatMaxes.get(PartType.Tire)}
+          />
         </Col>
       </Row>
       <h4>Overall Stats</h4>

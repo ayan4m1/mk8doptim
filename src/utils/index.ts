@@ -90,14 +90,119 @@ export const StatTypeColors = {
   [StatType.AirHandling]: '#48b4e0',
   [StatType.AntiGravitySpeed]: '#ff00ff',
   [StatType.AntiGravityHandling]: '#cc00cc',
-  [StatType.Acceleration]: '#ff2400',
-  [StatType.Weight]: '#35281e',
-  [StatType.Traction]: '#576778',
-  [StatType.MiniTurbo]: '#23dc00',
+  [StatType.Acceleration]: '#39dc14',
+  [StatType.Weight]: '#7289da',
+  [StatType.Traction]: '#a8033f',
+  [StatType.MiniTurbo]: '#ce3a00',
   [StatType.Invincibility]: '#52007a'
 };
 
-export const mappingPresets: Map<string, StatMapping> = new Map<
+export const StatTypeLabels = {
+  [StatType.GroundSpeed]: 'Speed',
+  [StatType.GroundHandling]: 'Handling',
+  [StatType.Acceleration]: 'Accel',
+  [StatType.Weight]: 'Weight',
+  [StatType.Traction]: 'Tract',
+  [StatType.MiniTurbo]: 'Turbo',
+  [StatType.Invincibility]: 'Invuln'
+};
+
+export const StatListing: StatType[][] = [
+  [
+    StatType.GroundSpeed,
+    StatType.WaterSpeed,
+    StatType.AirSpeed,
+    StatType.AntiGravitySpeed
+  ],
+  [StatType.Acceleration],
+  [StatType.Weight],
+  [
+    StatType.GroundHandling,
+    StatType.WaterHandling,
+    StatType.AirHandling,
+    StatType.AntiGravityHandling
+  ],
+  [StatType.Traction],
+  [StatType.MiniTurbo],
+  [StatType.Invincibility]
+];
+
+export const StatMaxes = new Map<PartType, StatMapping>([
+  [
+    PartType.Body,
+    new Map<StatType, number>([
+      [StatType.GroundSpeed, 5],
+      [StatType.WaterSpeed, 5],
+      [StatType.AirSpeed, 4],
+      [StatType.AntiGravitySpeed, 5],
+      [StatType.GroundHandling, 5],
+      [StatType.WaterHandling, 5],
+      [StatType.AirHandling, 4],
+      [StatType.AntiGravityHandling, 5],
+      [StatType.Acceleration, 7],
+      [StatType.Weight, 4],
+      [StatType.Traction, 7],
+      [StatType.MiniTurbo, 7],
+      [StatType.Invincibility, 7]
+    ])
+  ],
+  [
+    PartType.Driver,
+    new Map<StatType, number>([
+      [StatType.GroundSpeed, 10],
+      [StatType.WaterSpeed, 10],
+      [StatType.AirSpeed, 10],
+      [StatType.AntiGravitySpeed, 10],
+      [StatType.GroundHandling, 10],
+      [StatType.WaterHandling, 10],
+      [StatType.AirHandling, 10],
+      [StatType.AntiGravityHandling, 10],
+      [StatType.Acceleration, 5],
+      [StatType.Weight, 10],
+      [StatType.Traction, 5],
+      [StatType.MiniTurbo, 5],
+      [StatType.Invincibility, 6]
+    ])
+  ],
+  [
+    PartType.Glider,
+    new Map<StatType, number>([
+      [StatType.GroundSpeed, 1],
+      [StatType.WaterSpeed, 1],
+      [StatType.AirSpeed, 3],
+      [StatType.AntiGravitySpeed, 1],
+      [StatType.GroundHandling, 1],
+      [StatType.WaterHandling, 1],
+      [StatType.AirHandling, 2],
+      [StatType.AntiGravityHandling, 1],
+      [StatType.Acceleration, 2],
+      [StatType.Weight, 1],
+      [StatType.Traction, 1],
+      [StatType.MiniTurbo, 2],
+      [StatType.Invincibility, 1]
+    ])
+  ],
+  [
+    PartType.Tire,
+    new Map<StatType, number>([
+      [StatType.GroundSpeed, 4],
+      [StatType.WaterSpeed, 4],
+      [StatType.AirSpeed, 4],
+      [StatType.AntiGravitySpeed, 4],
+      [StatType.GroundHandling, 4],
+      [StatType.WaterHandling, 4],
+      [StatType.AirHandling, 4],
+      [StatType.AntiGravityHandling, 4],
+      [StatType.Acceleration, 6],
+      [StatType.Weight, 4],
+      [StatType.Traction, 7],
+      [StatType.MiniTurbo, 6],
+      [StatType.Invincibility, 6]
+    ])
+  ]
+]);
+
+export const MappingPresets: Map<string, StatMapping> = new Map<
   string,
   StatMapping
 >([
