@@ -71,7 +71,7 @@ export default function IndexPage() {
   if (loading) {
     return (
       <Fragment>
-        <Helmet title="Mario Kart 8 Optimizer" />
+        <Helmet title="Loading" />
         <Container fluid>
           <Row>
             <Col xs={12}>
@@ -85,9 +85,9 @@ export default function IndexPage() {
 
   return (
     <Fragment>
-      <Helmet title="Mario Kart 8 Optimizer" />
+      <Helmet title="Build Optimizer" />
       <OptimizeForm onSubmit={handleOptimize} />
-      {builds?.bodies.length && <BuildResult builds={builds} />}
+      {Boolean(builds) && <BuildResult builds={builds} />}
     </Fragment>
   );
 }
