@@ -305,3 +305,7 @@ export const getRemainingPercent = (weights?: StatMapping): number => {
     )
   );
 };
+
+export const maxStatTotals = new Map<StatType, number>(
+  Object.values(StatType).map((type) => [type, 20])
+);

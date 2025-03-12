@@ -22,10 +22,6 @@ interface IProps {
   builds: EquivalentBuilds;
 }
 
-const totalStatMax = new Map<StatType, number>(
-  Object.values(StatType).map((type) => [type, 20])
-);
-
 export default function BuildResult({ builds }: IProps) {
   const effectiveParts = useMemo(
     () => ({
@@ -164,7 +160,7 @@ export default function BuildResult({ builds }: IProps) {
           average
         </span>
       </h6>
-      <StatBars stats={buildStats} maxStats={totalStatMax} />
+      <StatBars stats={buildStats} />
     </Container>
   );
 }

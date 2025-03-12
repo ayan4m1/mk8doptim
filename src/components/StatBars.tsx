@@ -1,11 +1,11 @@
 import { Container } from 'react-bootstrap';
 
 import StatBar from './StatBar';
-import { StatMapping, getTotalStatScore, StatListing } from '../utils';
+import { StatMapping, StatListing, maxStatTotals } from '../utils';
 
 interface IProps {
   stats: StatMapping;
-  maxStats: StatMapping;
+  maxStats?: StatMapping;
 }
 
 export default function StatBars({ stats, maxStats }: IProps) {
@@ -19,7 +19,7 @@ export default function StatBars({ stats, maxStats }: IProps) {
             <StatBar
               key={index}
               stat={stat}
-              maxValue={maxStats.get(stat)}
+              maxValue={(maxStats ?? maxStatTotals).get(stat)}
               value={stats.get(stat)}
             />
           );
@@ -28,7 +28,7 @@ export default function StatBars({ stats, maxStats }: IProps) {
             <StatBar
               key={index}
               stat={list}
-              maxValue={maxStats.values().next().value}
+              maxValue={(maxStats ?? maxStatTotals).values().next().value}
               value={list.map((type) => stats.get(type))}
             />
           );
