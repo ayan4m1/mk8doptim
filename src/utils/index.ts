@@ -19,6 +19,11 @@ export enum StatType {
   Invincibility = 'invincibility'
 }
 
+export type OptimizeSubmitHandler = (
+  mode: string,
+  weights?: StatMapping
+) => void;
+
 export type StatMapping = Map<StatType, number>;
 
 export type Build = {
@@ -287,15 +292,15 @@ export const calculateStat = (
 
 export const getRemainingPercent = (weights?: StatMapping): number => {
   if (!weights) {
-    return 100;
+    return 1e2;
   }
 
   return Math.min(
-    100,
+    1e2,
     Math.max(
       0,
       Math.round(
-        100 -
+        1e2 -
           Array.from(weights.values()).reduce(
             (sum, weight) => sum + weight,
             0

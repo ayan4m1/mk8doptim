@@ -1,20 +1,15 @@
-import {
-  ChangeEvent,
-  FormEvent,
-  Fragment,
-  useCallback,
-  useMemo,
-  useRef,
-  useState
-} from 'react';
+import { ChangeEvent, Fragment, useCallback, useMemo, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCalculator,
   faEraser,
-  faPlusCircle
+  faPencil,
+  faPlusCircle,
+  faTrash
 } from '@fortawesome/free-solid-svg-icons';
 import {
   Button,
+  ButtonGroup,
   Card,
   CloseButton,
   Col,
@@ -29,21 +24,35 @@ import {
   CalculationMode,
   getRemainingPercent,
   MappingPresets,
+  OptimizeSubmitHandler,
   StatMapping,
   StatType,
   StatTypeAbbreviations,
   StatTypeColors
 } from '../utils';
+import { useFormik } from 'formik';
 
 interface IProps {
-  onSubmit: (mode: string, weights?: StatMapping) => void;
+  onSubmit: OptimizeSubmitHandler;
 }
 
 export default function OptimizeForm({ onSubmit }: IProps) {
-  const [showInstructions, setShowInstructions] = useState<boolean>(false);
-  const [mode, setMode] = useState<CalculationMode>(CalculationMode.Overall);
-  const statRef = useRef<HTMLSelectElement>(null);
-  const weightRef = useRef<HTMLInputElement>(null);
+  const {
+    handleSubmit,
+    handleChange,
+    setFieldValue,
+    setFieldError,
+    values,
+    errors
+  } = useFormik({
+    initialValues: {
+      showInstructions: false,
+      mode: CalculationMode.Overall,
+      stat: StatType.Acceleration,
+      weight: 0
+    },
+    onSubmit: (values) => onSubmit(values.mode, statMap)
+  });
   const [statMap, setStatMap] = useState<StatMapping>(
     new Map<StatType, number>()
   );
@@ -51,69 +60,101 @@ export default function OptimizeForm({ onSubmit }: IProps) {
     () => getRemainingPercent(statMap),
     [statMap]
   );
-  const handleSubmit = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      onSubmit(mode, statMap);
-    },
-    [mode, statMap, onSubmit]
-  );
   const handleStatAdd = useCallback(() => {
-    if (!statRef.current || !weightRef.current) {
+    if (!values.stat || !values.weight) {
       return;
     }
-
-    const weight = parseInt(weightRef.current.value, 10);
-
-    if (isNaN(weight) || weight <= 0 || weight > remainingPercent) {
-      return;
-    }
-
-    const statType = statRef.current.value as StatType;
 
     setStatMap((map) => {
-      if (map.has(statType)) {
-        return map;
-      }
-
       const newMap = new Map<StatType, number>(map);
 
-      newMap.set(statType, parseInt(weightRef.current.value, 10) / 1e2);
-
-      weightRef.current.value = getRemainingPercent(newMap).toString();
+      newMap.set(values.stat, values.weight / 1e2);
+      setFieldValue('weight', getRemainingPercent(newMap));
 
       return newMap;
     });
-  }, [statRef, weightRef, remainingPercent, setStatMap]);
-  const handleStatClear = useCallback(
-    () => setStatMap(new Map<StatType, number>()),
+  }, [values, setStatMap, setFieldValue]);
+  const handleStatClear = useCallback(() => {
+    setStatMap(new Map<StatType, number>());
+    setFieldValue('weight', '0');
+  }, [setFieldValue]);
+  const handleWeightChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const value = parseInt(event.target.value, 10);
+      const currentValue = statMap.get(values.stat) * 1e2;
+      const effectiveRemainingPct = remainingPercent + currentValue;
+
+      if (value > effectiveRemainingPct) {
+        setFieldError(
+          'weight',
+          `Weight must be less than ${effectiveRemainingPct}%`
+        );
+        return;
+      } else if (value < 0) {
+        setFieldError('weight', 'Weight must be positive.');
+        return;
+      }
+
+      return handleChange(event);
+    },
+    [handleChange, setFieldError, remainingPercent, statMap, values]
+  );
+  const handleStatRemove = useCallback(
+    (stat: StatType) =>
+      setStatMap((map) => {
+        const newMap = new Map<StatType, number>(map);
+
+        newMap.delete(stat);
+
+        return newMap;
+      }),
     []
   );
+  const handleStatChange = useCallback(
+    (event: ChangeEvent<HTMLSelectElement>) => {
+      const stat = event.target.value as StatType;
+
+      if (statMap.has(stat)) {
+        setFieldValue('weight', statMap.get(stat) * 1e2);
+        return;
+      }
+
+      return handleChange(event);
+    },
+    [setFieldValue, handleChange, statMap]
+  );
+  const handleStatClick = useCallback(
+    (stat: StatType) => {
+      setFieldValue('stat', stat);
+      setFieldValue('weight', (statMap.get(stat) * 1e2).toString());
+    },
+    [setFieldValue, statMap]
+  );
   const handleDismissInstructions = useCallback(
-    () => setShowInstructions(false),
-    [setShowInstructions]
+    () => setFieldValue('showInstructions', false),
+    [setFieldValue]
   );
   const handleUpdateMode = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const newMode = event.target.value as CalculationMode;
 
-      setMode(newMode);
+      setFieldValue('mode', newMode);
       if (newMode !== 'weighted' && newMode !== 'overall') {
         setStatMap(MappingPresets.get(newMode));
       }
-      if (newMode === 'weighted' && !showInstructions) {
-        setShowInstructions(true);
-      } else if (newMode !== 'weighted' && showInstructions) {
-        setShowInstructions(false);
+      if (newMode === 'weighted' && !values.showInstructions) {
+        setFieldValue('showInstructions', true);
+      } else if (newMode !== 'weighted' && values.showInstructions) {
+        setFieldValue('showInstructions', false);
       }
     },
-    [setMode, setStatMap, showInstructions]
+    [values, setFieldValue]
   );
 
   return (
     <Container>
       <h2>Optimize</h2>
-      {showInstructions && (
+      {values.showInstructions && (
         <Card bg="info" body className="my-2">
           <Row className="d-flex">
             <Col>
@@ -142,6 +183,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
             <Row className="mb-2">
               <Col xs={12} className="d-flex">
                 <Form.Select
+                  name="mode"
                   onChange={handleUpdateMode}
                   className="flex-fill me-2"
                 >
@@ -153,18 +195,22 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                   ))}
                   <option value="weighted">Custom Weights</option>
                 </Form.Select>
-                {mode === 'overall' && (
-                  <Button variant="success" type="submit">
-                    <FontAwesomeIcon fixedWidth icon={faCalculator} /> Calculate
+                {values.mode === 'overall' && (
+                  <Button variant="primary" type="submit">
+                    <FontAwesomeIcon icon={faCalculator} /> Calculate
                   </Button>
                 )}
               </Col>
             </Row>
-            {mode !== 'overall' && (
+            {values.mode !== 'overall' && (
               <Fragment>
                 <Row>
                   <Col xs={8} className="pe-0">
-                    <Form.Select ref={statRef}>
+                    <Form.Select
+                      name="stat"
+                      value={values.stat}
+                      onChange={handleStatChange}
+                    >
                       {Object.entries(StatType).map(([key, val]) => (
                         <option key={key} value={val}>
                           {key.replace(/([^^])([A-Z])/g, '$1 $2')}
@@ -172,54 +218,90 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                       ))}
                     </Form.Select>
                   </Col>
-                  <Col xs={2}>
-                    <InputGroup>
+                  <Form.Group as={Col} xs={2} controlId="weight">
+                    <InputGroup hasValidation>
                       <Form.Control
                         min={0}
-                        max={remainingPercent}
+                        step={1}
+                        name="weight"
                         type="number"
-                        ref={weightRef}
-                        disabled={remainingPercent <= 0}
+                        value={values.weight}
+                        onChange={handleWeightChange}
+                        disabled={!values.stat && remainingPercent <= 0}
+                        isInvalid={Boolean(errors.weight)}
                       />
+
                       <InputGroup.Text>%</InputGroup.Text>
+                      {errors.weight && (
+                        <Form.Control.Feedback type="invalid">
+                          {errors.weight}
+                        </Form.Control.Feedback>
+                      )}
                     </InputGroup>
-                  </Col>
+                  </Form.Group>
                   <Col xs={2} className="d-flex">
-                    <Button
-                      variant="success"
-                      type="button"
-                      onClick={handleStatAdd}
-                      className="flex-fill me-1"
-                      disabled={remainingPercent <= 0}
-                    >
-                      <FontAwesomeIcon icon={faPlusCircle} /> Add
-                    </Button>
-                    <Button
-                      variant="danger"
-                      type="button"
-                      onClick={handleStatClear}
-                      className="flex-fill ms-1"
-                      disabled={remainingPercent === 100}
-                    >
-                      <FontAwesomeIcon icon={faEraser} /> Clear
-                    </Button>
+                    <ButtonGroup className="flex-fill">
+                      {statMap.has(values.stat) ? (
+                        <Fragment>
+                          <Button
+                            variant="primary"
+                            type="button"
+                            onClick={handleStatAdd}
+                          >
+                            <FontAwesomeIcon icon={faPencil} /> Edit
+                          </Button>
+                          <Button
+                            variant="danger"
+                            type="button"
+                            onClick={() => handleStatRemove(values.stat)}
+                          >
+                            <FontAwesomeIcon icon={faTrash} /> Remove
+                          </Button>
+                        </Fragment>
+                      ) : (
+                        <Button
+                          variant="success"
+                          type="button"
+                          onClick={handleStatAdd}
+                          disabled={remainingPercent <= 0}
+                        >
+                          <FontAwesomeIcon icon={faPlusCircle} /> Add
+                        </Button>
+                      )}
+                      <Button
+                        variant="danger"
+                        type="button"
+                        onClick={handleStatClear}
+                        disabled={remainingPercent === 100}
+                      >
+                        <FontAwesomeIcon icon={faEraser} /> Clear
+                      </Button>
+                    </ButtonGroup>
                   </Col>
                 </Row>
                 <Row className="mt-2">
                   <Col xs={12} className="d-flex align-items-center">
-                    <ProgressBar max={100} className="flex-fill me-2">
+                    <ProgressBar
+                      max={100}
+                      className="flex-fill me-2 progress-thicc"
+                    >
                       {statMap?.entries() &&
                         Array.from(statMap.entries()).map(([type, weight]) => (
                           <ProgressBar
                             key={type}
                             now={weight * 1e2}
-                            style={{ backgroundColor: StatTypeColors[type] }}
+                            style={{
+                              backgroundColor: StatTypeColors[type],
+                              cursor: 'pointer'
+                            }}
                             label={StatTypeAbbreviations[type]}
+                            onClick={() => handleStatClick(type)}
+                            className="progress-thicc-bar"
                           />
                         ))}
                     </ProgressBar>
                     <Button
-                      variant="success"
+                      variant="primary"
                       type="submit"
                       disabled={!statMap.size || remainingPercent > 0}
                     >
