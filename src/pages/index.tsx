@@ -1,9 +1,6 @@
 import uniq from 'lodash.uniq';
 import { Helmet } from 'react-helmet';
-import { Col, Container, Row } from 'react-bootstrap';
 import { Fragment, useCallback, useState } from 'react';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import BuildResult from '../components/BuildResult';
 import OptimizeForm from '../components/OptimizeForm';
@@ -16,6 +13,7 @@ import {
   EquivalentBuilds,
   StatMapping
 } from '../utils';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function IndexPage() {
   const { loading, bodies, drivers, gliders, tires } = useMarioKartData();
@@ -69,18 +67,7 @@ export default function IndexPage() {
   );
 
   if (loading) {
-    return (
-      <Fragment>
-        <Helmet title="Loading" />
-        <Container fluid>
-          <Row>
-            <Col xs={12}>
-              <FontAwesomeIcon icon={faSpinner} spin size="2xl" />
-            </Col>
-          </Row>
-        </Container>
-      </Fragment>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
