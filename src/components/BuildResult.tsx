@@ -38,7 +38,7 @@ export default function BuildResult({ builds }: IProps) {
   );
   const totalScore = useMemo(() => getTotalStatScore(buildStats), [buildStats]);
   const qualityRating = useMemo(
-    () => Math.round((totalScore / 260 - 0.5) * 1e2),
+    () => Math.round((totalScore / 155) * 1e2),
     [totalScore]
   );
   const bestTrackType = useMemo(() => {
@@ -150,17 +150,16 @@ export default function BuildResult({ builds }: IProps) {
           />
         </Col>
       </Row>
-      <h4>Overall Stats</h4>
-      <h6>Best Track Type: {bestTrackType}</h6>
-      <h6>Stat Points: {totalScore} / 260</h6>
-      <h6>
-        Quality:{' '}
-        <span className={`text-${qualityRating > 0 ? 'success' : 'danger'}`}>
-          {Math.abs(qualityRating)}% {qualityRating > 0 ? 'above' : 'below'}{' '}
-          average
-        </span>
-      </h6>
-      <StatBars stats={buildStats} />
+      <Row>
+        <Col>
+          <h4>Overall Stats</h4>
+          <h6>Best Track Type: {bestTrackType}</h6>
+          <h6>
+            Stat Points: {totalScore} / 155 ({Math.abs(qualityRating)}%)
+          </h6>
+          <StatBars stats={buildStats} />
+        </Col>
+      </Row>
     </Container>
   );
 }
