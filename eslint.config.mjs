@@ -17,19 +17,35 @@ export default config(
       'react-hooks': reactHooksPlugin
     },
     languageOptions: {
-      globals: globals.browser
+      globals: globals.browser,
+      parser: babelParser,
+      parserOptions: {
+        requireConfigFile: false
+      }
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,
       ...reactHooksPlugin.configs.recommended.rules,
       'react/jsx-uses-react': 0,
+      'react/jsx-sort-props': 2,
       'react/react-in-jsx-scope': 0
     },
     settings: {
       react: {
         version: 'detect'
+      },
+      'import-x/resolver': {
+        node: {
+          paths: ['./src/']
+        }
       }
     }
   },
-  eslintPluginPrettier
-);
+  {
+    files: ['webpack.config.*'],
+    languageOptions: {
+      globals: globals.node
+    }
+  },
+  prettierPlugin
+];
