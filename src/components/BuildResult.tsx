@@ -83,7 +83,7 @@ export default function BuildResult({ builds }: IProps) {
     <Container className="mt-4">
       <h2>Results</h2>
       <Row className="mb-2">
-        <Col sm={12} md={3}>
+        <Col md={3} sm={12}>
           <h5>
             <FontAwesomeIcon icon={faCar} /> Vehicles
           </h5>
@@ -93,7 +93,7 @@ export default function BuildResult({ builds }: IProps) {
             ))}
           </ListGroup>
         </Col>
-        <Col sm={12} md={3}>
+        <Col md={3} sm={12}>
           <h5>
             <FontAwesomeIcon icon={faHelmetSafety} /> Drivers
           </h5>
@@ -103,7 +103,7 @@ export default function BuildResult({ builds }: IProps) {
             ))}
           </ListGroup>
         </Col>
-        <Col sm={12} md={3}>
+        <Col md={3} sm={12}>
           <h5>
             <FontAwesomeIcon icon={faPaperPlane} /> Gliders
           </h5>
@@ -113,7 +113,7 @@ export default function BuildResult({ builds }: IProps) {
             ))}
           </ListGroup>
         </Col>
-        <Col sm={12} md={3}>
+        <Col md={3} sm={12}>
           <h5>
             <FontAwesomeIcon icon={faCircleDot} /> Tires
           </h5>
@@ -127,26 +127,26 @@ export default function BuildResult({ builds }: IProps) {
       <Row className="my-4">
         <Col xs={3}>
           <StatBars
-            stats={effectiveParts.body.stats}
             maxStats={StatMaxes.get(PartType.Body)}
+            stats={effectiveParts.body.stats}
           />
         </Col>
         <Col xs={3}>
           <StatBars
-            stats={effectiveParts.driver.stats}
             maxStats={StatMaxes.get(PartType.Driver)}
+            stats={effectiveParts.driver.stats}
           />
         </Col>
         <Col xs={3}>
           <StatBars
-            stats={effectiveParts.glider.stats}
             maxStats={StatMaxes.get(PartType.Glider)}
+            stats={effectiveParts.glider.stats}
           />
         </Col>
         <Col xs={3}>
           <StatBars
-            stats={effectiveParts.tire.stats}
             maxStats={StatMaxes.get(PartType.Tire)}
+            stats={effectiveParts.tire.stats}
           />
         </Col>
       </Row>

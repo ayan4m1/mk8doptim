@@ -16,8 +16,8 @@ export default function TrackTypeBar({ stats, values, max }: IProps) {
           <ProgressBar
             key={index}
             label={value}
-            now={value}
             max={max * 4}
+            now={value}
             style={{ backgroundColor: StatTypeColors[stats[index]] }}
           />
         ))}

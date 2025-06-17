@@ -16,7 +16,7 @@ export default function StatBar({ stat, maxValue, value }: IProps) {
 
   return Array.isArray(stat) ? (
     <Row className="d-flex align-items-baseline g-0">
-      <Col xs={3} className="text-end pe-2">
+      <Col className="text-end pe-2" xs={3}>
         {StatTypeLabels[stat[0]].replace(/([^^])([A-Z])/g, '$1 $2')}
       </Col>
       <Col xs={9}>
@@ -29,14 +29,14 @@ export default function StatBar({ stat, maxValue, value }: IProps) {
     </Row>
   ) : (
     <Row className="d-flex align-items-baseline g-0">
-      <Col xs={3} className="text-end pe-2">
+      <Col className="text-end pe-2" xs={3}>
         {StatTypeLabels[stat].replace(/([^^])([A-Z])/g, '$1 $2')}
       </Col>
       <Col xs={9}>
         <ProgressBar>
           <ProgressBar
-            max={maxValue}
             label={value}
+            max={maxValue}
             now={value as number}
             style={{ backgroundColor: StatTypeColors[stat] }}
           />

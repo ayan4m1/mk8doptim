@@ -11,7 +11,7 @@ export default function LoadingSpinner() {
       <Container fluid>
         <Row>
           <Col xs={12}>
-            <FontAwesomeIcon icon={faSpinner} spin size="2xl" />
+            <FontAwesomeIcon icon={faSpinner} size="2xl" spin />
           </Col>
         </Row>
       </Container>

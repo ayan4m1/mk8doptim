@@ -181,11 +181,11 @@ export default function OptimizeForm({ onSubmit }: IProps) {
         <Col xs={12}>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-2">
-              <Col xs={12} className="d-flex">
+              <Col className="d-flex" xs={12}>
                 <Form.Select
+                  className="flex-fill me-2"
                   name="mode"
                   onChange={handleUpdateMode}
-                  className="flex-fill me-2"
                 >
                   <option value="overall">Overall</option>
                   {Array.from(MappingPresets.entries()).map(([name]) => (
@@ -196,7 +196,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                   <option value="weighted">Custom Weights</option>
                 </Form.Select>
                 {values.mode === 'overall' && (
-                  <Button variant="primary" type="submit">
+                  <Button type="submit" variant="primary">
                     <FontAwesomeIcon icon={faCalculator} /> Calculate
                   </Button>
                 )}
@@ -205,11 +205,11 @@ export default function OptimizeForm({ onSubmit }: IProps) {
             {values.mode !== 'overall' && (
               <Fragment>
                 <Row>
-                  <Col xs={8} className="pe-0">
+                  <Col className="pe-0" xs={8}>
                     <Form.Select
                       name="stat"
-                      value={values.stat}
                       onChange={handleStatChange}
+                      value={values.stat}
                     >
                       {Object.entries(StatType).map(([key, val]) => (
                         <option key={key} value={val}>
@@ -218,17 +218,17 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                       ))}
                     </Form.Select>
                   </Col>
-                  <Form.Group as={Col} xs={2} controlId="weight">
+                  <Form.Group as={Col} controlId="weight" xs={2}>
                     <InputGroup hasValidation>
                       <Form.Control
-                        min={0}
-                        step={1}
-                        name="weight"
-                        type="number"
-                        value={values.weight}
-                        onChange={handleWeightChange}
                         disabled={!values.stat && remainingPercent <= 0}
                         isInvalid={Boolean(errors.weight)}
+                        min={0}
+                        name="weight"
+                        onChange={handleWeightChange}
+                        step={1}
+                        type="number"
+                        value={values.weight}
                       />
 
                       <InputGroup.Text>%</InputGroup.Text>
@@ -239,40 +239,40 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                       )}
                     </InputGroup>
                   </Form.Group>
-                  <Col xs={2} className="d-flex">
+                  <Col className="d-flex" xs={2}>
                     <ButtonGroup className="flex-fill">
                       {statMap.has(values.stat) ? (
                         <Fragment>
                           <Button
-                            variant="primary"
-                            type="button"
                             onClick={handleStatAdd}
+                            type="button"
+                            variant="primary"
                           >
                             <FontAwesomeIcon icon={faPencil} /> Edit
                           </Button>
                           <Button
-                            variant="danger"
-                            type="button"
                             onClick={() => handleStatRemove(values.stat)}
+                            type="button"
+                            variant="danger"
                           >
                             <FontAwesomeIcon icon={faTrash} /> Remove
                           </Button>
                         </Fragment>
                       ) : (
                         <Button
-                          variant="success"
-                          type="button"
-                          onClick={handleStatAdd}
                           disabled={remainingPercent <= 0}
+                          onClick={handleStatAdd}
+                          type="button"
+                          variant="success"
                         >
                           <FontAwesomeIcon icon={faPlusCircle} /> Add
                         </Button>
                       )}
                       <Button
-                        variant="danger"
-                        type="button"
-                        onClick={handleStatClear}
                         disabled={remainingPercent === 100}
+                        onClick={handleStatClear}
+                        type="button"
+                        variant="danger"
                       >
                         <FontAwesomeIcon icon={faEraser} /> Clear
                       </Button>
@@ -280,30 +280,30 @@ export default function OptimizeForm({ onSubmit }: IProps) {
                   </Col>
                 </Row>
                 <Row className="mt-2">
-                  <Col xs={12} className="d-flex align-items-center">
+                  <Col className="d-flex align-items-center" xs={12}>
                     <ProgressBar
-                      max={100}
                       className="flex-fill me-2 progress-thicc"
+                      max={100}
                     >
                       {statMap?.entries() &&
                         Array.from(statMap.entries()).map(([type, weight]) => (
                           <ProgressBar
+                            className="progress-thicc-bar"
                             key={type}
+                            label={StatTypeAbbreviations[type]}
                             now={weight * 1e2}
+                            onClick={() => handleStatClick(type)}
                             style={{
                               backgroundColor: StatTypeColors[type],
                               cursor: 'pointer'
                             }}
-                            label={StatTypeAbbreviations[type]}
-                            onClick={() => handleStatClick(type)}
-                            className="progress-thicc-bar"
                           />
                         ))}
                     </ProgressBar>
                     <Button
-                      variant="primary"
-                      type="submit"
                       disabled={!statMap.size || remainingPercent > 0}
+                      type="submit"
+                      variant="primary"
                     >
                       <FontAwesomeIcon icon={faCalculator} /> Calculate
                     </Button>
