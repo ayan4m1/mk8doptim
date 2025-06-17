@@ -2,7 +2,7 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "module": "CommonJS",
+    "module": "esnext",
     "jsx": "react-jsx",
     "outDir": "./dist",
     "target": "es6"
