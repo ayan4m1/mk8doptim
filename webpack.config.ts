@@ -1,5 +1,5 @@
 import { resolve } from 'path';
-import { Configuration } from 'webpack';
+import { Configuration, WebpackPluginInstance } from 'webpack';
 import autoprefixer from 'autoprefixer';
 import HtmlPlugin from 'html-webpack-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
@@ -15,7 +15,7 @@ import 'webpack-dev-server';
 
 const dev = process.env.NODE_ENV === 'development';
 
-const plugins = [
+const plugins: WebpackPluginInstance[] = [
   new CleanPlugin(),
   new HtmlPlugin({
     template: './src/index.html'

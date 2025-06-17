@@ -2,30 +2,25 @@ import globals from 'globals';
 import eslint from '@eslint/js';
 import reactPlugin from 'eslint-plugin-react';
 import { config, configs } from 'typescript-eslint';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
-import eslintPluginImportX from 'eslint-plugin-import-x';
+import { configs as hooksConfigs } from 'eslint-plugin-react-hooks';
+import { flatConfigs as importConfigs } from 'eslint-plugin-import-x';
 import eslintPluginPrettier from 'eslint-plugin-prettier/recommended';
 
-export default config(
+export default config([
   eslint.configs.recommended,
   ...configs.recommended,
-  eslintPluginImportX.flatConfigs.recommended,
-  eslintPluginImportX.flatConfigs.typescript,
+  importConfigs.recommended,
+  importConfigs.typescript,
+  hooksConfigs['recommended-latest'],
   {
     plugins: {
-      react: reactPlugin,
-      'react-hooks': reactHooksPlugin
+      react: reactPlugin
     },
     languageOptions: {
-      globals: globals.browser,
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false
-      }
+      globals: globals.browser
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,
-      ...reactHooksPlugin.configs.recommended.rules,
       'react/jsx-uses-react': 0,
       'react/jsx-sort-props': 2,
       'react/react-in-jsx-scope': 0
@@ -33,11 +28,6 @@ export default config(
     settings: {
       react: {
         version: 'detect'
-      },
-      'import-x/resolver': {
-        node: {
-          paths: ['./src/']
-        }
       }
     }
   },
@@ -47,5 +37,5 @@ export default config(
       globals: globals.node
     }
   },
-  prettierPlugin
-];
+  eslintPluginPrettier
+]);
