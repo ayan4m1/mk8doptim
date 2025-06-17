@@ -1,5 +1,5 @@
-import { resolve } from 'path';
-import { Configuration, WebpackPluginInstance } from 'webpack';
+import { dirname, resolve } from 'path';
+import { type Configuration, type WebpackPluginInstance } from 'webpack';
 import autoprefixer from 'autoprefixer';
 import HtmlPlugin from 'html-webpack-plugin';
 import ESLintPlugin from 'eslint-webpack-plugin';
@@ -12,6 +12,7 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import { CleanWebpackPlugin as CleanPlugin } from 'clean-webpack-plugin';
 
 import 'webpack-dev-server';
+import { fileURLToPath } from 'url';
 
 const dev = process.env.NODE_ENV === 'development';
 
@@ -103,7 +104,7 @@ const config: Configuration = {
     ]
   },
   output: {
-    path: resolve(__dirname, 'dist'),
+    path: resolve(dirname(fileURLToPath(import.meta.url)), 'dist'),
     filename: '[name].js',
     chunkFilename: '[name].js'
   },
