@@ -243,9 +243,12 @@ export const MappingPresets: Map<string, StatMapping> = new Map<
   [
     'Traction',
     new Map<StatType, number>([
-      [StatType.Traction, 0.75],
-      [StatType.Acceleration, 0.15],
-      [StatType.WaterSpeed, 0.1]
+      [StatType.Traction, 0.5],
+      [StatType.Acceleration, 0.1],
+      [StatType.GroundHandling, 0.1],
+      [StatType.WaterHandling, 0.1],
+      [StatType.AirHandling, 0.1],
+      [StatType.AntiGravityHandling, 0.1]
     ])
   ]
 ]);
