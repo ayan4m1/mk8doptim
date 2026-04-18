@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { parsePart, Part } from '../utils';
 
 export default function useMarioKartData() {
-  const [bodies, setBodies] = useState<Part[]>(null);
-  const [drivers, setDrivers] = useState<Part[]>(null);
-  const [gliders, setGliders] = useState<Part[]>(null);
-  const [tires, setTires] = useState<Part[]>(null);
+  const [bodies, setBodies] = useState<Part[]>();
+  const [drivers, setDrivers] = useState<Part[]>();
+  const [gliders, setGliders] = useState<Part[]>();
+  const [tires, setTires] = useState<Part[]>();
 
   useEffect(() => {
     async function fetchData() {

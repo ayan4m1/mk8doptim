@@ -1,5 +1,4 @@
-import uniq from 'lodash.uniq';
-import { Helmet } from 'react-helmet';
+import { uniq } from 'lodash';
 import { Fragment, useCallback, useState } from 'react';
 
 import BuildResult from '../components/BuildResult';
@@ -17,17 +16,17 @@ import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function IndexPage() {
   const { loading, bodies, drivers, gliders, tires } = useMarioKartData();
-  const [builds, setBuilds] = useState<EquivalentBuilds>(null);
+  const [builds, setBuilds] = useState<EquivalentBuilds>();
 
   const handleOptimize = useCallback(
     (mode: string, weights?: StatMapping) => {
       let topScore = 0,
         equivalentBuilds: Build[] = [];
 
-      for (const body of bodies) {
-        for (const driver of drivers) {
-          for (const glider of gliders) {
-            for (const tire of tires) {
+      for (const body of bodies ?? []) {
+        for (const driver of drivers ?? []) {
+          for (const glider of gliders ?? []) {
+            for (const tire of tires ?? []) {
               const build = {
                 body,
                 driver,
@@ -72,9 +71,13 @@ export default function IndexPage() {
 
   return (
     <Fragment>
-      <Helmet title="Build Optimizer" />
+      <title>mk8doptim - Build Optimizer</title>
       <OptimizeForm onSubmit={handleOptimize} />
-      {Boolean(builds) && <BuildResult builds={builds} />}
+      {Boolean(builds) && (
+        <BuildResult
+          builds={builds ?? { bodies: [], drivers: [], gliders: [], tires: [] }}
+        />
+      )}
     </Fragment>
   );
 }

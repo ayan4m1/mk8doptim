@@ -105,6 +105,12 @@ export const StatTypeColors = {
 export const StatTypeLabels = {
   [StatType.GroundSpeed]: 'Speed',
   [StatType.GroundHandling]: 'Handling',
+  [StatType.WaterSpeed]: 'Speed',
+  [StatType.WaterHandling]: 'Handling',
+  [StatType.AirSpeed]: 'Speed',
+  [StatType.AirHandling]: 'Handling',
+  [StatType.AntiGravitySpeed]: 'Speed',
+  [StatType.AntiGravityHandling]: 'Handling',
   [StatType.Acceleration]: 'Accel',
   [StatType.Weight]: 'Weight',
   [StatType.Traction]: 'Tract',
@@ -268,12 +274,12 @@ export const getTotalStatScore = (mapping: StatMapping): number =>
 
 export const calculateWeightedStats = (
   build: Build,
-  weights: StatMapping
+  weights?: StatMapping
 ): StatMapping =>
   new Map<StatType, number>(
     Object.values(StatType).map((type) => [
       type,
-      calculateStat(build, type, weights.get(type) ?? 0)
+      calculateStat(build, type, weights?.get(type) ?? 0)
     ])
   );
 
@@ -287,10 +293,10 @@ export const calculateStat = (
   type: StatType,
   weight: number
 ): number =>
-  (build.glider.stats.get(type) +
-    build.driver.stats.get(type) +
-    build.body.stats.get(type) +
-    build.tire.stats.get(type)) *
+  ((build.glider.stats.get(type) ?? 0) +
+    (build.driver.stats.get(type) ?? 0) +
+    (build.body.stats.get(type) ?? 0) +
+    (build.tire.stats.get(type) ?? 0)) *
   weight;
 
 export const getRemainingPercent = (weights?: StatMapping): number => {

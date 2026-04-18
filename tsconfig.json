@@ -5,9 +5,9 @@
     "module": "esnext",
     "moduleResolution": "node",
     "jsx": "react-jsx",
-    "outDir": "./dist",
-    "target": "es6",
-    "baseUrl": "."
+    "rootDir": "./",
+    "outDir": "dist",
+    "target": "esnext"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "index.d.ts"]
 }

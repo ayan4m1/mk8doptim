@@ -18,18 +18,18 @@ export default function StatBars({ stats, maxStats }: IProps) {
           return (
             <StatBar
               key={index}
-              maxValue={(maxStats ?? maxStatTotals).get(stat)}
+              maxValue={(maxStats ?? maxStatTotals).get(stat) ?? 0}
               stat={stat}
-              value={stats.get(stat)}
+              value={stats.get(stat) ?? 0}
             />
           );
         } else {
           return (
             <StatBar
               key={index}
-              maxValue={(maxStats ?? maxStatTotals).values().next().value}
+              maxValue={(maxStats ?? maxStatTotals).values().next().value ?? 0}
               stat={list}
-              value={list.map((type) => stats.get(type))}
+              value={list.map((type) => stats.get(type) ?? 0)}
             />
           );
         }

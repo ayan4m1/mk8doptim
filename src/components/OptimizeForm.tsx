@@ -77,11 +77,11 @@ export default function OptimizeForm({ onSubmit }: IProps) {
   const handleStatClear = useCallback(() => {
     setStatMap(new Map<StatType, number>());
     setFieldValue('weight', '0');
-  }, [setFieldValue]);
+  }, [setStatMap, setFieldValue]);
   const handleWeightChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       const value = parseInt(event.target.value, 10);
-      const currentValue = statMap.get(values.stat) * 1e2;
+      const currentValue = (statMap.get(values.stat) ?? 0) * 1e2;
       const effectiveRemainingPct = remainingPercent + currentValue;
 
       if (value > effectiveRemainingPct) {
@@ -108,14 +108,14 @@ export default function OptimizeForm({ onSubmit }: IProps) {
 
         return newMap;
       }),
-    []
+    [setStatMap]
   );
   const handleStatChange = useCallback(
     (event: ChangeEvent<HTMLSelectElement>) => {
       const stat = event.target.value as StatType;
 
       if (statMap.has(stat)) {
-        setFieldValue('weight', statMap.get(stat) * 1e2);
+        setFieldValue('weight', (statMap.get(stat) ?? 0) * 1e2);
         return;
       }
 
@@ -126,7 +126,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
   const handleStatClick = useCallback(
     (stat: StatType) => {
       setFieldValue('stat', stat);
-      setFieldValue('weight', (statMap.get(stat) * 1e2).toString());
+      setFieldValue('weight', ((statMap.get(stat) ?? 0) * 1e2).toString());
     },
     [setFieldValue, statMap]
   );
@@ -140,7 +140,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
 
       setFieldValue('mode', newMode);
       if (newMode !== 'weighted' && newMode !== 'overall') {
-        setStatMap(MappingPresets.get(newMode));
+        setStatMap(MappingPresets.get(newMode) ?? ({} as StatMapping));
       }
       if (newMode === 'weighted' && !values.showInstructions) {
         setFieldValue('showInstructions', true);
@@ -148,7 +148,7 @@ export default function OptimizeForm({ onSubmit }: IProps) {
         setFieldValue('showInstructions', false);
       }
     },
-    [values, setFieldValue]
+    [values, setFieldValue, setStatMap]
   );
 
   return (

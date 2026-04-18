@@ -22,10 +22,13 @@ const router = createHashRouter([
     ]
   }
 ]);
-const root = createRoot(document.getElementById('root'));
+const rootElem = document.getElementById('root');
+if (rootElem) {
+  const root = createRoot(rootElem);
 
-root.render(
-  <Suspense fallback={<SuspenseFallback />}>
-    <RouterProvider router={router} />
-  </Suspense>
-);
+  root.render(
+    <Suspense fallback={<SuspenseFallback />}>
+      <RouterProvider router={router} />
+    </Suspense>
+  );
+}

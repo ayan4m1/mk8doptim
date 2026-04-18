@@ -45,28 +45,28 @@ export default function BuildResult({ builds }: IProps) {
     const stats: [number, string][] = [
       [
         [StatType.GroundSpeed, StatType.GroundHandling].reduce(
-          (sum, type) => sum + buildStats.get(type),
+          (sum, type) => sum + (buildStats.get(type) ?? 0),
           0
         ),
         'Ground'
       ],
       [
         [StatType.WaterSpeed, StatType.WaterHandling].reduce(
-          (sum, type) => sum + buildStats.get(type),
+          (sum, type) => sum + (buildStats.get(type) ?? 0),
           0
         ),
         'Water'
       ],
       [
         [StatType.AirSpeed, StatType.AirHandling].reduce(
-          (sum, type) => sum + buildStats.get(type),
+          (sum, type) => sum + (buildStats.get(type) ?? 0),
           0
         ),
         'Air'
       ],
       [
         [StatType.AntiGravitySpeed, StatType.AntiGravityHandling].reduce(
-          (sum, type) => sum + buildStats.get(type),
+          (sum, type) => sum + (buildStats.get(type) ?? 0),
           0
         ),
         'Anti-Gravity'
@@ -74,9 +74,14 @@ export default function BuildResult({ builds }: IProps) {
     ];
 
     const statValues = [...stats.map(([val]) => val)];
-    const [, name] = stats.find(([val]) => val === Math.max(...statValues));
+    const stat = stats.find(([val]) => val === Math.max(...statValues));
 
-    return name;
+    if (!stat) {
+      return null;
+    }
+
+    // stat name
+    return stat[1];
   }, [buildStats]);
 
   return (
